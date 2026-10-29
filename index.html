@@ -1127,5 +1127,14 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initApp);
     else initApp();
   </script>
+  <audio id="musique-quiz" src="musique-fond.mp3" loop></audio>
+  <script>
+    document.body.addEventListener('click', function() {
+      const musique = document.getElementById('musique-quiz');
+      if (musique.paused) {
+        musique.play().catch(erreur => console.log("Attente d'interaction de l'utilisateur..."));
+      }
+    }, { once: true });
+  </script>
 </body>
 </html>
