@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LEGO One Piece - Morning Brief Quiz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Bebas Neue (Pirate/Bounty) & Inter (Readable) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.6.0/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0f172a; /* Deep ocean blue */
+      /* Ocean / Marine pattern */
+      background-image: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+      color: #f8fafc;
+    }
+
+    .font-bounty {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 1px;
+    }
+
+    /* Wood panel styling for cards */
+    .wood-panel {
+      background-color: #78350f; /* amber-900 */
+      background-image: repeating-linear-gradient(
+        45deg,
+        #78350f 25%,
+        #713f12 25%,
+        #713f12 50%,
+        #78350f 50%,
+        #78350f 75%,
+        #713f12 75%,
+        #713f12 100%
+      );
+      background-size: 40px 40px;
+      border: 4px solid #f59e0b; /* amber-500 gold */
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+      color: #fef3c7;
+    }
+
+    .op-button {
+      border: 2px solid #fcd34d;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .op-button:active {
+      transform: translateY(2px);
+      box-shadow: inset 0 4px 6px rgba(0,0,0,0.5);
+    }
+
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #ef4444; border-radius: 5px; }
+    ::-webkit-scrollbar-thumb:hover { background: #dc2626; }
+
+    @keyframes pulseDanger {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .animate-danger { animation: pulseDanger 0.6s infinite ease-in-out; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-red-500 selection:text-white">
+
+  <!-- HEADER -->
+  <header class="w-full bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-4 py-3 shadow-lg border-b-2 border-amber-500">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3 cursor-pointer group" onclick="app.showScreen('welcome')">
+        <!-- Straw Hat Icon -->
+        <div class="w-12 h-12 bg-amber-400 rounded-full border-4 border-red-600 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:bg-amber-300 transition-colors">
+          <span class="text-2xl">☠️</span>
+        </div>
+        <div>
+          <span class="text-[10px] sm:text-xs uppercase font-bold tracking-widest text-amber-500 block">LEGO Store Brief</span>
+          <h1 class="text-3xl md:text-4xl font-bounty tracking-wider text-white flex items-center gap-2 leading-none mt-1 drop-shadow-md">
+            ONE PIECE <span class="bg-red-600 text-white px-2 py-0.5 rounded text-xl md:text-2xl shadow-sm op-button">QUIZ</span>
+          </h1>
+        </div>
+      </div>
+
+      <!-- Header actions -->
+      <div class="flex items-center gap-2">
+        <button onclick="app.showLeaderboard()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs md:text-sm font-bold text-amber-400 op-button flex items-center gap-1.5">
+          🏆 <span class="hidden sm:inline font-bounty text-lg">Primes</span>
+        </button>
+        <button id="soundToggleBtn" onclick="app.toggleSound()" class="p-2.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-amber-400 op-button" title="Activer / Couper le son">
+          <svg id="soundIconOn" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+          </svg>
+          <svg id="soundIconOff" class="w-5 h-5 hidden text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z m12.414-4.586L21 7.414M18 10.414l3 3"/>
+          </svg>
+        </button>
+        <button onclick="app.openCustomModal()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs md:text-sm font-bold text-blue-400 op-button flex items-center gap-1.5">
+          <span class="text-blue-400 text-lg">⚓</span> <span class="hidden sm:inline font-bounty text-lg">Log Pose</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-grow flex items-center justify-center p-4 max-w-4xl w-full mx-auto relative z-10">
+
+    <!-- SCREEN 1: ACCUEIL & CHOIX DU MODE -->
+    <section id="screen-welcome" class="w-full text-center space-y-8 py-6">
+      <div class="space-y-3">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-slate-800 border border-slate-600 rounded-full text-amber-400 text-xs uppercase tracking-wider font-bold shadow-sm">
+          🏴‍☠️ HISSEZ LES VOILES !
+        </div>
+        <h2 class="text-6xl md:text-8xl font-bounty text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] pb-2">
+          LE GRAND <span class="text-red-500">LINE QUIZ</span>
+        </h2>
+        <p class="text-slate-300 max-w-lg mx-auto text-sm md:text-base font-semibold">
+          Préparez le brief du matin en testant vos connaissances sur la série Netflix et les sets officiels LEGO One Piece !
+        </p>
+      </div>
+
+      <!-- Sélection du mode -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left max-w-2xl mx-auto">
+        <!-- Mode Solo -->
+        <div onclick="app.openNameSetup('solo')" class="group relative bg-slate-800 border-2 border-slate-600 hover:border-amber-500 p-6 rounded-2xl cursor-pointer transition shadow-lg hover:shadow-amber-500/20">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-amber-900 text-amber-400 flex items-center justify-center font-bold text-2xl rounded-full border-2 border-amber-500">
+              🧭
+            </div>
+            <span class="text-xs px-3 py-1 rounded-full bg-slate-900 text-amber-500 font-bold border border-amber-500/50">Navire Solo</span>
+          </div>
+          <h3 class="text-3xl font-bounty tracking-wide text-white group-hover:text-amber-400 transition mb-2">Mode Équipage</h3>
+          <p class="text-sm text-slate-400 font-medium">Répondez tous ensemble sur l'écran ou désignez un capitaine du jour.</p>
+        </div>
+
+        <!-- Mode Duel Équipes -->
+        <div onclick="app.openNameSetup('duel')" class="group relative bg-slate-800 border-2 border-slate-600 hover:border-red-500 p-6 rounded-2xl cursor-pointer transition shadow-lg hover:shadow-red-500/20">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-red-950 text-red-500 flex items-center justify-center font-bold text-2xl rounded-full border-2 border-red-500">
+              ⚔️
+            </div>
+            <span class="text-xs px-3 py-1 rounded-full bg-slate-900 text-red-500 font-bold border border-red-500/50">Guerre au Sommet</span>
+          </div>
+          <h3 class="text-3xl font-bounty tracking-wide text-white group-hover:text-red-400 transition mb-2">Duel de Factions</h3>
+          <p class="text-sm text-slate-400 font-medium">Séparez le magasin en deux camps (Pirates vs Marine) au tour par tour.</p>
+        </div>
+      </div>
+
+      <!-- Quick Settings -->
+      <div class="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-400 pt-4 font-semibold">
+        <label class="flex items-center gap-2 cursor-pointer bg-slate-800 px-4 py-2 rounded border border-slate-700 hover:bg-slate-700 transition">
+          <input type="checkbox" id="timerEnabledCheck" checked class="w-4 h-4 accent-amber-500 rounded">
+          <span>Chronomètre (15s)</span>
+        </label>
+        <div class="bg-slate-800 px-4 py-2 rounded border border-slate-700 text-slate-300">
+          Base : <span id="poolCountText" class="text-amber-400 font-bold font-bounty text-xl">100</span> Berrys
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: QUESTION EN COURS -->
+    <section id="screen-quiz" class="w-full hidden space-y-6">
+      
+      <!-- Barre d'état -->
+      <div class="bg-slate-800 rounded-2xl p-4 border-2 border-slate-600 flex flex-wrap items-center justify-between gap-4 shadow-xl">
+        <div class="flex items-center gap-3">
+          <span class="text-xl px-3 py-1 rounded bg-slate-900 border border-amber-500/30 text-amber-500 font-bounty" id="currentRoundBadge">
+            Q1/10
+          </span>
+          <span class="text-xs font-bold px-3 py-1 rounded-full text-white bg-blue-800 border border-blue-400" id="categoryBadge">
+            Univers
+          </span>
+        </div>
+
+        <div id="duelHeaderWidget" class="hidden flex items-center gap-3 text-xs font-bold">
+          <div id="teamAStatus" class="px-3 py-1.5 rounded transition-all">
+            <span class="font-bounty text-2xl tracking-wide" id="uiTeamAName">PIRATES</span> <span class="mx-1 text-slate-500">|</span> <span id="teamAScore" class="text-lg">0</span>
+          </div>
+          <span class="text-slate-500 font-bounty text-2xl">VS</span>
+          <div id="teamBStatus" class="px-3 py-1.5 rounded transition-all">
+            <span class="font-bounty text-2xl tracking-wide" id="uiTeamBName">MARINE</span> <span class="mx-1 text-slate-500">|</span> <span id="teamBScore" class="text-lg">0</span>
+          </div>
+        </div>
+
+        <div id="soloHeaderWidget" class="text-sm font-bold text-amber-100 bg-amber-900/50 px-4 py-1.5 rounded border border-amber-700">
+          <span id="uiSoloName" class="font-bounty text-2xl tracking-wider text-amber-400">NOM</span> <span class="mx-2 opacity-50">|</span> <span id="soloScore" class="text-white font-bounty text-2xl">0</span> pts
+        </div>
+
+        <div id="timerContainer" class="flex items-center gap-3 font-bounty">
+          <button id="jokerBtn" onclick="app.useJoker()" class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-500 text-white text-xl op-button transition border-2 border-blue-300 shadow-md" title="Haki de l'Observation (1 par partie)">
+            👁️
+          </button>
+          
+          <div id="timerBox" class="w-12 h-12 rounded-full bg-slate-900 border-4 border-amber-500 flex items-center justify-center text-amber-500 text-3xl shadow-inner transition-colors">
+            15
+          </div>
+        </div>
+      </div>
+
+      <div id="teamTurnIndicator" class="hidden text-center py-1">
+        <p class="text-3xl font-bounty tracking-wider text-white drop-shadow-md" id="teamTurnText">
+          C'est au tour des <span class="text-amber-400">PIRATES</span> !
+        </p>
+      </div>
+
+      <!-- Question Card -->
+      <div class="wood-panel rounded-xl p-6 md:p-8 relative">
+        <div class="min-h-[100px] flex items-center justify-center text-center">
+          <h3 id="questionText" class="text-2xl md:text-3xl font-inter font-bold text-amber-100 leading-tight drop-shadow-md">
+            Déploiement des voiles...
+          </h3>
+        </div>
+
+        <div id="optionsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+          <!-- Injecté dynamiquement -->
+        </div>
+
+        <div id="feedbackContainer" class="hidden mt-8 p-5 rounded-lg border-2 text-center space-y-3">
+          <div id="feedbackTitle" class="font-bounty text-4xl tracking-wide drop-shadow-sm"></div>
+          <p id="feedbackExplanation" class="text-base font-bold leading-snug"></p>
+          
+          <div id="feedbackMedia" class="w-full flex justify-center mt-3 empty:hidden overflow-hidden border-2 rounded"></div>
+          
+          <button id="nextBtn" onclick="app.nextQuestion()" class="mt-4 px-8 py-3 bg-slate-900 hover:bg-slate-800 text-amber-500 border border-amber-500 font-bounty text-2xl rounded op-button inline-flex items-center gap-2">
+            <span>CAP SUR LA SUITE</span>
+            <span>➔</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: RÉSULTATS -->
+    <section id="screen-results" class="w-full hidden text-center space-y-8 py-6">
+      <div class="space-y-3">
+        <div class="inline-block p-4 rounded-full bg-slate-800 border-2 border-amber-500 text-5xl mb-2 shadow-lg shadow-amber-500/20" id="resultTrophyIcon">
+          🏴‍☠️
+        </div>
+        <h2 id="resultMainTitle" class="text-6xl md:text-8xl font-bounty text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] pb-2">
+          FIN DU VOYAGE !
+        </h2>
+        <p id="resultSubtitle" class="text-slate-400 max-w-md mx-auto text-base font-semibold">
+          Voici le montant de votre prime suite à ce quiz.
+        </p>
+      </div>
+
+      <div class="wood-panel rounded-xl p-6 md:p-10 max-w-xl mx-auto space-y-8">
+        
+        <div id="soloScoreDisplay" class="space-y-3 bg-amber-900/40 p-6 rounded-lg border border-amber-700">
+          <p class="text-3xl text-amber-200 font-bounty tracking-widest uppercase">SCORE FINAL</p>
+          <div class="text-7xl font-bounty text-amber-400 drop-shadow-lg" id="finalScoreVal">8/10</div>
+          <div class="mt-4 inline-block px-5 py-2 rounded bg-red-900 text-red-100 font-bounty text-2xl border border-red-500" id="rankTitleBadge">Grade : Roi des Pirates</div>
+        </div>
+
+        <div id="duelScoreDisplay" class="hidden space-y-6">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-6 rounded-lg bg-amber-900/40 border border-amber-700 text-center">
+              <span id="finalUiTeamAName" class="text-2xl font-bounty tracking-wider text-amber-200 block mb-2">TEAM 1</span>
+              <span id="finalTeamAScore" class="text-7xl font-bounty text-amber-400">0</span>
+            </div>
+            <div class="p-6 rounded-lg bg-blue-900/40 border border-blue-700 text-center">
+              <span id="finalUiTeamBName" class="text-2xl font-bounty tracking-wider text-blue-200 block mb-2">TEAM 2</span>
+              <span id="finalTeamBScore" class="text-7xl font-bounty text-blue-400">0</span>
+            </div>
+          </div>
+          <div id="duelWinnerText" class="text-4xl font-bounty tracking-wider text-white bg-red-700 py-4 rounded border-2 border-red-400 shadow-md">
+            L'équipe gagne !
+          </div>
+        </div>
+
+        <div class="p-5 rounded bg-slate-900 border border-slate-700 text-left flex gap-4 items-center">
+          <span class="text-4xl">🍖</span>
+          <div class="text-sm md:text-base text-slate-300 font-semibold">
+            <strong class="text-amber-500 block font-bounty text-2xl tracking-wide mb-1">LEÇON DU JOUR :</strong>
+            <span id="dailyMotto">Même sans fruit du démon, vous pouvez accomplir de grandes choses !</span>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+          <button onclick="app.showScreen('welcome')" class="px-6 py-3 rounded bg-slate-800 hover:bg-slate-700 text-white font-bounty text-2xl op-button border border-slate-600">
+            ACCUEIL
+          </button>
+          <button onclick="app.restartWithSameSettings()" class="px-6 py-3 rounded bg-red-700 hover:bg-red-600 text-white font-bounty text-2xl op-button border border-red-500">
+            REJOUER
+          </button>
+          <button onclick="app.showLeaderboard()" class="px-6 py-3 rounded bg-amber-600 hover:bg-amber-500 text-white font-bounty text-2xl op-button border border-amber-400">
+            PRIMES (SCORES)
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 4: CLASSEMENT -->
+    <section id="screen-leaderboard" class="w-full hidden text-center space-y-8 py-6 relative z-10">
+      <div class="space-y-3">
+        <h2 class="text-5xl md:text-7xl font-bounty text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] pb-2">
+          MUR DES PRIMES
+        </h2>
+        <p class="text-slate-400 max-w-md mx-auto text-base font-semibold">
+          Les pirates les plus recherchés du magasin.
+        </p>
+      </div>
+
+      <div class="wood-panel rounded-xl p-6 md:p-8 max-w-2xl mx-auto">
+        <div class="flex gap-4 border-b-2 border-amber-700/50 mb-6 pb-2 justify-center font-bounty text-3xl">
+          <button onclick="app.renderLeaderboardList('solo')" id="tabSolo" class="text-amber-400 bg-amber-900/50 rounded-t px-4 py-2">PIRATES SOLOS</button>
+          <button onclick="app.renderLeaderboardList('duel')" id="tabDuel" class="text-amber-700 hover:text-amber-500 px-4 py-2">BATAILLES NAVALES</button>
+        </div>
+
+        <div id="leaderboardList" class="space-y-4 text-left">
+          <!-- Injecté dynamiquement -->
+        </div>
+        
+        <div class="mt-10 flex justify-center gap-4">
+          <button onclick="app.showScreen('welcome')" class="px-8 py-3 rounded bg-slate-800 hover:bg-slate-700 text-white font-bounty text-2xl op-button border border-slate-600">
+            RETOUR
+          </button>
+          <button onclick="app.clearLeaderboard()" class="px-5 py-3 rounded bg-red-900/50 hover:bg-red-900 text-red-300 font-bounty text-xl op-button border border-red-800 flex items-center">
+            Brûler les affiches
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: CHOIX DES NOMS -->
+  <div id="nameSetupModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="wood-panel rounded-xl max-w-md w-full p-8 space-y-6 shadow-2xl">
+      <div class="flex justify-between items-center pb-3 border-b border-amber-500/50">
+        <h3 class="text-4xl font-bounty tracking-wide text-amber-400">ÉQUIPAGE !</h3>
+        <button onclick="app.closeNameSetup()" class="text-amber-700 hover:text-red-500 text-4xl font-bold leading-none">&times;</button>
+      </div>
+      
+      <form id="nameSetupForm" onsubmit="app.startWithNames(event)" class="space-y-5">
+        <div id="soloNameInput" class="space-y-2">
+          <label class="block text-amber-100 text-lg font-bounty tracking-wide">Nom du Pirate</label>
+          <input type="text" id="participantName" placeholder="Ex: Luffy, Zoro..." class="w-full bg-slate-900 border border-amber-700 rounded p-3 text-white font-bold focus:outline-none focus:border-amber-400 transition">
+        </div>
+
+        <div id="duelNameInputs" class="space-y-5 hidden">
+          <div>
+            <label class="block text-amber-400 font-bounty tracking-wide text-2xl mb-1">Faction 1 (Pirates)</label>
+            <input type="text" id="team1Name" value="Chapeaux de Paille" class="w-full bg-slate-900 border border-amber-700 rounded p-3 text-amber-400 font-bold focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-blue-400 font-bounty tracking-wide text-2xl mb-1">Faction 2 (Marine)</label>
+            <input type="text" id="team2Name" value="La Marine" class="w-full bg-slate-900 border border-blue-700 rounded p-3 text-blue-400 font-bold focus:outline-none">
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4">
+          <button type="button" onclick="app.closeNameSetup()" class="px-5 py-3 rounded bg-slate-800 text-slate-300 font-bounty text-2xl hover:bg-slate-700 op-button">ANNULER</button>
+          <button type="submit" class="px-6 py-3 rounded bg-red-700 hover:bg-red-600 text-white font-bounty text-2xl op-button border border-red-500">EMBARQUER</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: AJOUT DE QUESTION -->
+  <div id="customModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="wood-panel rounded-xl max-w-lg w-full p-8 space-y-5 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center pb-3 border-b border-amber-500/50">
+        <h3 class="text-4xl font-bounty text-amber-400">NOUVELLE PAGE DU LOG POSE</h3>
+        <button onclick="app.closeCustomModal()" class="text-amber-700 hover:text-red-500 text-4xl font-bold leading-none">&times;</button>
+      </div>
+      <form id="addQuestionForm" onsubmit="app.handleCustomQuestionSubmit(event)" class="space-y-4 text-sm font-bold text-amber-100">
+        <div>
+          <label class="block mb-1.5 font-bounty tracking-wide text-xl">La Question</label>
+          <textarea id="custQText" required rows="2" class="w-full bg-slate-900 border border-amber-700 rounded p-3 focus:outline-none" placeholder="Ex: Quel est le rêve de Zoro ?"></textarea>
+        </div>
+        <div>
+          <label class="block text-green-400 mb-1.5 font-bounty tracking-wide text-xl">Bonne réponse</label>
+          <input type="text" id="custQCorrect" required class="w-full bg-slate-900 border border-green-600 rounded p-3 text-green-400 focus:outline-none" placeholder="Le meilleur sabreur">
+        </div>
+        <div class="space-y-3">
+          <label class="block text-red-400 font-bounty tracking-wide text-xl">Mauvaises réponses</label>
+          <input type="text" id="custQWrong1" required class="w-full bg-slate-900 border border-red-800 rounded p-3 text-red-300 focus:outline-none" placeholder="Trouver All Blue">
+          <input type="text" id="custQWrong2" class="w-full bg-slate-900 border border-red-800 rounded p-3 text-red-300 focus:outline-none" placeholder="Cartographier le monde (Optionnel)">
+          <input type="text" id="custQWrong3" class="w-full bg-slate-900 border border-red-800 rounded p-3 text-red-300 focus:outline-none" placeholder="Faux 3 (Optionnel)">
+        </div>
+        
+        <div>
+          <label class="block mb-1.5 mt-2 font-bounty text-xl text-blue-400 tracking-wide">Lien Image ou Vidéo YT (Optionnel)</label>
+          <input type="text" id="custQMedia" class="w-full bg-slate-900 border border-blue-800 rounded p-3 text-blue-300 focus:outline-none" placeholder="Ex: https://www.youtube.com/watch?v=...">
+        </div>
+
+        <div>
+          <label class="block mb-1.5 mt-2 font-bounty tracking-wide text-xl">Anecdote (Lore)</label>
+          <textarea id="custQExpl" rows="2" class="w-full bg-slate-900 border border-amber-700 rounded p-3 focus:outline-none text-amber-200" placeholder="Ex: Il a fait cette promesse à Kuina..."></textarea>
+        </div>
+        <div class="flex justify-end gap-3 pt-4 border-t border-amber-500/50">
+          <button type="button" onclick="app.closeCustomModal()" class="px-5 py-3 rounded bg-slate-800 text-slate-300 font-bounty text-2xl hover:bg-slate-700 op-button">ANNULER</button>
+          <button type="submit" class="px-6 py-3 rounded bg-blue-700 hover:bg-blue-600 text-white font-bounty text-2xl op-button border border-blue-500">AJOUTER</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="w-full text-center py-5 text-sm text-slate-500 font-bold relative z-10 mt-auto font-inter">
+    <p>LEGO® One Piece Quiz • Actualisé avec les vagues 2025/2026 • Hissez haut les briques ! ⚓</p>
+  </footer>
+
+  <script>
+    /**
+     * BANQUE DE 100 QUESTIONS: SETS LEGO OFFICIELS (2025-2026) & SERIE NETFLIX/ANIME
+     */
+    const INITIAL_QUESTIONS = [
+      // === VAGUES LEGO ONE PIECE (AOÛT 2025 & 2026) ===
+      { question: "En quelle année est sortie la toute première vague de sets officiels LEGO One Piece ?", options: ["Août 2025", "Janvier 2024", "Septembre 2026", "2020"], correct: 0, category: "Gamme LEGO", explanation: "La première vague officielle a déferlé en août 2025, capitalisant sur le succès phénoménal de l'adaptation Netflix." },
+      { question: "Quel est le plus grand set LEGO de la vague d'août 2025 (Set 75640) avec ses 3402 pièces ?", options: ["Le Restaurant flottant Baratie", "Le Vogue Merry", "Arlong Park", "Le Navire de Garp"], correct: 0, category: "Sets LEGO", explanation: "Le Baratie est le flagship de la première vague, un modèle massif de plus de 3400 pièces." },
+      { question: "Le navire emblématique de l'équipage a été édité en set (75639) en 2025. Comment s'appelle-t-il ?", options: ["Le Vogue Merry (Going Merry)", "Le Thousand Sunny", "Le Red Force", "Le Moby Dick"], correct: 0, category: "Sets LEGO", explanation: "Composé de 1376 pièces, le Vogue Merry est le premier bateau pirate des Chapeaux de Paille en briques." },
+      { question: "Dans la vague d'août 2026, quel navire de la Marine avec une figure de proue de chien a été adapté en LEGO (75646) ?", options: ["Le navire de Garp", "Le navire de Smoker", "Le navire de Koby", "Le Buster Call"], correct: 0, category: "Sets LEGO", explanation: "Le navire du vice-amiral Garp (1705 pièces) est la pièce maîtresse de la vague 2026 !" },
+      { question: "Quel fruit du démon a eu droit à sa propre réplique officielle à construire en briques LEGO (Set 75647) en 2026 ?", options: ["Le Fruit du Gum-Gum", "Le Fruit de la Fragmentation", "Le Fruit Fumigène", "Le Fruit du Feu"], correct: 0, category: "Sets LEGO", explanation: "Le célèbre Gomu Gomu no Mi a été recréé avec 482 pièces, incluant les fameuses spirales sur sa coque." },
+      { question: "Quel parc d'attractions aquatique, repaire d'un terrible homme-poisson, est devenu le set LEGO 75638 en 2025 ?", options: ["Arlong Park", "Sabaody", "Fishman Island", "Impel Down"], correct: 0, category: "Sets LEGO", explanation: "Ce set de 926 pièces met en scène la bataille épique de Luffy contre Arlong." },
+      { question: "Dans la vague 2026, quel repaire enneigé sur l'île de Drum est sorti en set LEGO (75641) avec 271 pièces ?", options: ["Le repaire du Docteur Hiriluk", "Le Château de Wapol", "L'usine de Franky", "Le laboratoire de Vegapunk"], correct: 0, category: "Sets LEGO", explanation: "Il inclut les figurines exclusives du Dr Hiriluk et de Kureha !" },
+      { question: "Quel clown tristement célèbre a vu son chapiteau de cirque adapté en LEGO (Set 75637, 573 pièces) ?", options: ["Baggy le Clown", "César Clown", "Joker (Doflamingo)", "Kaba"], correct: 0, category: "Sets LEGO", explanation: "Le chapiteau de Baggy a été l'un des premiers sets d'entrée de gamme de 2025." },
+      { question: "Dans la vague 2026, quel duel mythique entre deux géants sur Little Garden a été immortalisé (Set 75644) ?", options: ["Dorry contre Brogy", "Oars contre Moria", "Hajrudin contre Machvise", "Saul contre Kuzan"], correct: 0, category: "Sets LEGO", explanation: "Un superbe set de 733 pièces recréant le combat éternel des deux géants d'Elbaf." },
+      { question: "La bataille au sommet d'une montagne enneigée a été adaptée dans le set 75645 (1038 pièces). Quel en est le nom ?", options: ["Bataille au château de Drum", "Bataille d'Onigashima", "Bataille de Marineford", "L'ascension de Reverse Mountain"], correct: 0, category: "Sets LEGO", explanation: "C'est le set qui marque l'affrontement contre Wapol et l'arrivée de Chopper dans l'équipage." },
+      { question: "Laquelle de ces figurines LEGO BrickHeadz One Piece est sortie en août 2025 avec le numéro 40799 ?", options: ["Monkey D. Luffy", "Roronoa Zoro", "Nami", "Shanks"], correct: 0, category: "Gamme LEGO", explanation: "Luffy a eu droit à sa figurine cubique BrickHeadz de 136 pièces." },
+      { question: "Quel petit set de 299 pièces (75636) rend hommage au village natal de Luffy dans la gamme 2025 ?", options: ["Le Bar du village de Fuchsia", "La maison de Dadan", "Le moulin de Cocoyasi", "L'île de Dawn"], correct: 0, category: "Sets LEGO", explanation: "Le bar de Makino où Shanks a confié son chapeau de paille à Luffy." },
+      { question: "Loguetown n'a pas été oubliée en 2026 avec le set 75642 (547 pièces). De quoi s'agit-il ?", options: ["L'affrontement avec le capitaine Smoker", "L'exécution de Gol D. Roger", "La fuite sous la pluie de Dragon", "Le magasin de sabres de Tashigi"], correct: 0, category: "Sets LEGO", explanation: "Le duel enfumé entre Luffy et Smoker en plein Loguetown." },
+      { question: "Sur quelle plateforme le film d'animation spécial en deux parties 'LEGO ONE PIECE' a-t-il été diffusé le 29 septembre 2026 ?", options: ["Netflix", "Crunchyroll", "ADN", "Disney+"], correct: 0, category: "Lore", explanation: "Netflix a diffusé ce spécial animé pour fêter l'arrivée de la Saison 2 et des nouveaux sets !" },
+      { question: "Quel célèbre médecin au nez bleu a eu droit à son propre set constructible (Set 75643) de 577 pièces en 2026 ?", options: ["Tony-Tony Chopper", "Trafalgar Law", "Hiriluk", "Marco"], correct: 0, category: "Sets LEGO", explanation: "Une belle figurine à construire de notre renne préféré, similaire au format de Stitch ou Yoda en LEGO." },
+      
+      // === NETFLIX LIVE ACTION & ANIME LORE ===
+      { question: "Dans l'adaptation live-action Netflix, quel acteur mexicain incarne le rôle de Monkey D. Luffy ?", options: ["Iñaki Godoy", "Mackenyu", "Taz Skylar", "Jacob Romero Gibson"], correct: 0, category: "Série Netflix", explanation: "Iñaki Godoy a été adoubé par Eiichiro Oda en personne pour incarner Luffy !" },
+      { question: "Qui est le créateur original (mangaka) de One Piece, qui a été très impliqué dans la série Netflix ?", options: ["Eiichiro Oda", "Masashi Kishimoto", "Akira Toriyama", "Tite Kubo"], correct: 0, category: "Culture", explanation: "Eiichiro Oda a supervisé le live-action pour garantir le respect de son œuvre." },
+      { question: "Comment s'appelle le pouvoir mystérieux mangé par Luffy dans son enfance ?", options: ["Le Fruit du Gum-Gum (Gomu Gomu no Mi)", "Le Fruit de la Fragmentation", "Le Fruit de l'Élasticité", "Le Fruit du Démon de l'Eau"], correct: 0, category: "Lore", explanation: "Un fruit du démon de type Paramecia qui rend son corps élastique." },
+      { question: "Quelle malédiction frappe tous ceux qui mangent un Fruit du Démon ?", options: ["Ils coulent comme une enclume dans l'eau de mer", "Ils ne peuvent plus dormir", "Ils doivent obéir au Gouvernement Mondial", "Ils perdent un sens (vue, ouïe...)"], correct: 0, category: "Lore", explanation: "La mer les rejette, ce qui est très ironique pour des pirates !" },
+      { question: "Quel est le rêve absolu de Roronoa Zoro (incarné par Mackenyu sur Netflix) ?", options: ["Devenir le plus grand sabreur du monde", "Trouver All Blue", "Dessiner une carte du monde", "Devenir Amiral de la Marine"], correct: 0, category: "Lore", explanation: "Il l'a promis à son amie d'enfance Kuina après son décès." },
+      { question: "Combien de sabres Zoro utilise-t-il pour se battre (le fameux Santoryu) ?", options: ["Trois (dont un dans la bouche)", "Deux", "Un seul mais très lourd", "Quatre"], correct: 0, category: "Lore", explanation: "Le style à trois sabres est sa signature absolue." },
+      { question: "Quelle actrice américaine incarne Nami, la navigatrice, dans la série Netflix ?", options: ["Emily Rudd", "Morgan Davies", "Zendaya", "Emma Watson"], correct: 0, category: "Série Netflix", explanation: "Emily Rudd, grande fan d'anime depuis des années, a décroché le rôle de Nami." },
+      { question: "Quel est l'objectif de Nami au début de la série Netflix (et de l'anime) ?", options: ["Voler la carte de Grand Line pour Arlong", "Tuer Luffy", "Acheter un bateau de la Marine", "Devenir la reine des pirates"], correct: 0, category: "Lore", explanation: "Elle vole des trésors (et la carte) pour racheter la liberté de son village à Arlong." },
+      { question: "Où se trouve le restaurant flottant Baratie, dirigé par Zeff au Pied Rouge ?", options: ["Sur l'océan d'East Blue", "Sur Grand Line", "Dans l'espace", "Sous la mer"], correct: 0, category: "Lore", explanation: "C'est le plus célèbre restaurant d'East Blue, où Sanji a été formé." },
+      { question: "Qui est le mentor de Sanji, qui lui a appris la cuisine et à se battre avec les jambes ?", options: ["Zeff", "Don Krieg", "Mihawk", "Jinbe"], correct: 0, category: "Lore", explanation: "Zeff a sacrifié sa jambe (littéralement) pour sauver Sanji quand ils étaient naufragés." },
+      { question: "Quel est le rêve de Sanji (incarné par Taz Skylar) ?", options: ["Trouver All Blue, un océan légendaire", "Ouvrir un restaurant sur la lune", "Avoir la plus grosse prime", "Vaincre Zeff"], correct: 0, category: "Lore", explanation: "All Blue est la mer où se réunissent les poissons des quatre océans." },
+      { question: "Quel acteur britannique incarne le tireur d'élite menteur Usopp dans le live-action ?", options: ["Jacob Romero Gibson", "Taz Skylar", "Peter Gadiot", "Craig Fairbrass"], correct: 0, category: "Série Netflix", explanation: "Jacob Romero Gibson apporte l'énergie et l'humour du célèbre sniper." },
+      { question: "Qui a donné le navire Vogue Merry à l'équipage de Luffy ?", options: ["Kaya (et Merry)", "Shanks le Roux", "Garp", "Le Maire du village de Sirop"], correct: 0, category: "Lore", explanation: "Pour les remercier d'avoir sauvé le village du Capitaine Kuro." },
+      { question: "Quel grand corsaire (Shichibukai) au regard perçant débarque sur le Baratie et coupe un galion en deux ?", options: ["Dracule Mihawk", "Crocodile", "Boa Hancock", "Jinbe"], correct: 0, category: "Lore", explanation: "Mihawk (Œil de Faucon) est le meilleur sabreur du monde, l'objectif ultime de Zoro." },
+      { question: "Dans le live-action Netflix, quel vice-amiral de la Marine traque sans relâche Luffy sur East Blue ?", options: ["Garp", "Smoker", "Akainu", "Nezumi"], correct: 0, category: "Série Netflix", explanation: "Garp a été beaucoup plus mis en avant dans la saison 1 de Netflix que dans l'anime au même stade." },
+      { question: "Quel lien de parenté secret (révélé plus tard) unit Garp et Luffy ?", options: ["Garp est le grand-père de Luffy", "Garp est son père", "Garp est son oncle", "Ils n'ont aucun lien de sang"], correct: 0, category: "Lore", explanation: "Monkey D. Garp est bien le grand-père de Monkey D. Luffy, d'où leur force monstrueuse !" },
+      { question: "Comment Shanks le Roux a-t-il perdu son bras gauche ?", options: ["En sauvant Luffy du Monstre de la Baie (le Maître du Grogneur)", "Lors d'un duel avec Mihawk", "Garp le lui a coupé", "Il est né comme ça"], correct: 0, category: "Lore", explanation: "Un sacrifice conscient pour 'parier sur la nouvelle génération'." },
+      { question: "Quelle particularité physique a Arlong, le grand méchant de la saison 1 (Netflix) ?", options: ["C'est un homme-poisson requin-scie", "Il est entièrement en caoutchouc", "Il fait 15 mètres de haut", "Il a deux têtes"], correct: 0, category: "Lore", explanation: "L'impitoyable Arlong déteste les humains et a colonisé le village de Nami." },
+      { question: "Dans la série, comment s'appelle le jeune garçon aux lunettes roses qui rêve de rejoindre la Marine ?", options: ["Koby", "Helmeppo", "Bogard", "Morgan"], correct: 0, category: "Lore", explanation: "Luffy l'aide à fuir l'équipage d'Alvida et Koby s'engage dans la Marine avec Garp." },
+      { question: "Qui est le Colonel Morgan (Morgan le Bûcheron) ?", options: ["Le père d'Helmeppo, qui a une hache à la place du bras droit", "Le chef d'Arlong", "Le maire de Shells Town", "Un pirate clown"], correct: 0, category: "Lore", explanation: "Un tyran de la Marine vaincu par l'alliance de Luffy et Zoro au tout début de l'aventure." },
+      { question: "Quel acteur incarne le terrifiant et excentrique Baggy le Clown dans le live-action ?", options: ["Jeff Ward", "Jim Carrey", "Steven John Ward", "Ilia Isorelýs Paulino"], correct: 0, category: "Série Netflix", explanation: "Jeff Ward a crevé l'écran et est devenu un des favoris des fans grâce à sa performance flippante." },
+      { question: "Que fait le Fruit de la Fragmentation (Bara Bara no Mi) de Baggy ?", options: ["Il peut séparer les parties de son corps et les faire voler (sauf ses pieds)", "Il fait exploser tout ce qu'il touche", "Il le rend invisible", "Il peut cloner son corps"], correct: 0, category: "Lore", explanation: "C'est l'antithèse de Luffy : les sabres ne peuvent rien contre lui puisqu'il se coupe volontairement." },
+      { question: "Qui est le Capitaine Kuro (Klahadore) ?", options: ["Un pirate déguisé en majordome pour tuer Kaya", "Le chef des cuisines du Baratie", "Le frère de Nami", "L'ancien second de Gol D. Roger"], correct: 0, category: "Lore", explanation: "Il utilise de longues griffes en forme d'épées et se déplace très rapidement." },
+      { question: "Comment se nomme la grande ligne océanique que tous les pirates cherchent à conquérir ?", options: ["Grand Line", "Red Line", "East Blue", "Calm Belt"], correct: 0, category: "Lore", explanation: "C'est l'océan le plus dangereux du monde, encadré par Calm Belt." },
+      { question: "Quel est le dernier mot (et trésor) laissé par le roi des pirates Gol D. Roger avant son exécution ?", options: ["Le One Piece", "L'Or de Shandora", "Le Poneglyphe", "L'Arme Antique"], correct: 0, category: "Lore", explanation: "Il a lancé l'Âge d'Or de la Piraterie avec son discours sur l'échafaud à Loguetown." },
+      { question: "Comment Luffy parvient-il à vaincre Arlong dans la série Netflix ?", options: ["En détruisant la carte room et en écrasant Arlong avec le bâtiment", "En le jetant dans la mer", "Avec un pistolet", "Zoro vient l'achever"], correct: 0, category: "Lore", explanation: "Il détruit la salle qui symbolise l'esclavage de Nami avec un Gum-Gum Hache, provoquant l'effondrement d'Arlong Park." },
+      { question: "Quel objet Zoro achète-t-il/gagne-t-il dans une boutique d'épées de Loguetown avec l'aide de Tashigi (Saison 2) ?", options: ["Le Sandai Kitetsu (un sabre maudit)", "L'Épée de Mihawk", "Un sabre en plastique", "L'Épée de Gol D. Roger"], correct: 0, category: "Lore", explanation: "Zoro teste la malédiction en lançant le sabre en l'air au-dessus de son bras." },
+      { question: "Qui a composé la musique épique de la série live-action Netflix de One Piece ?", options: ["Sonya Belousova et Giona Ostinelli", "Hans Zimmer", "John Williams", "Kohei Tanaka (seul)"], correct: 0, category: "Série Netflix", explanation: "Le duo (qui a aussi fait The Witcher) s'est allié au compositeur historique de l'anime (Kohei Tanaka) pour certains thèmes." },
+      { question: "Dans le monde de One Piece, quelle organisation secrète (vue dans la Saison 2) est dirigée par Mr. 0 ?", options: ["Baroque Works", "Le CP9", "L'Armée Révolutionnaire", "Les Chevaliers Divins"], correct: 0, category: "Lore", explanation: "Baroque Works tente de s'emparer du royaume d'Alabasta." },
+      { question: "Quelle grande rumeur a entouré la conception des décors pour la série Netflix ?", options: ["Ils ont construit de VRAIS navires grandeur nature à Cape Town (Afrique du Sud)", "Tout a été fait sur fond vert 100% CGI", "Ils ont réutilisé les bateaux de Pirates des Caraïbes", "Les acteurs ne sont jamais allés sur l'eau"], correct: 0, category: "Série Netflix", explanation: "L'immense majorité des bateaux (Baratie, Merry, navire de Garp) ont été construits en dur en Afrique du Sud !" }
+    ];
+
+    /**
+     * MOTEUR AUDIO
+     */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      initCtx() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+      }
+      playTreasure() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        
+        // Son de "Découverte de trésor"
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        let now = this.ctx.currentTime;
+        notes.forEach((freq, index) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + index * 0.1);
+          gain.gain.setValueAtTime(0, now + index * 0.1);
+          gain.gain.linearRampToValueAtTime(0.3, now + index * 0.1 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.1 + 0.4);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + index * 0.1);
+          osc.stop(now + index * 0.1 + 0.4);
+        });
+      }
+      playSplash() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        
+        // Son de "Tombé à l'eau / Plouf" grave
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(200, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.4, this.ctx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.3);
+      }
+      playTick() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.05);
+      }
+    }
+
+    /**
+     * CONTRÔLEUR PRINCIPAL DE L'APPLICATION
+     */
+    class QuizApp {
+      constructor() {
+        this.questionsPool = [...INITIAL_QUESTIONS];
+        this.sound = new SoundEngine();
+        this.gameMode = 'solo';
+        this.activeQuestions = [];
+        this.currentIndex = 0;
+        this.totalQuestionsCount = 10;
+        this.soloScore = 0;
+        this.teamAScore = 0;
+        this.teamBScore = 0;
+        this.currentTurn = 'teamA';
+        this.playerName = 'Chapeau de Paille';
+        this.teamAName = 'Pirates';
+        this.teamBName = "Marine";
+        this.pendingMode = 'solo';
+        this.timerEnabled = true;
+        this.timerSeconds = 15;
+        this.timerInterval = null;
+        this.hasAnswered = false;
+        this.jokers = { solo: 1, teamA: 1, teamB: 1 };
+        
+        this.initUI();
+      }
+
+      initUI() {
+        document.getElementById('poolCountText').innerText = this.questionsPool.length;
+      }
+
+      toggleSound() {
+        this.sound.enabled = !this.sound.enabled;
+        const iconOn = document.getElementById('soundIconOn');
+        const iconOff = document.getElementById('soundIconOff');
+        if (this.sound.enabled) {
+          iconOn.classList.remove('hidden');
+          iconOff.classList.add('hidden');
+          this.sound.playTick();
+        } else {
+          iconOn.classList.add('hidden');
+          iconOff.classList.remove('hidden');
+        }
+      }
+
+      showScreen(screenId) {
+        clearInterval(this.timerInterval);
+        document.getElementById('screen-welcome').classList.add('hidden');
+        document.getElementById('screen-quiz').classList.add('hidden');
+        document.getElementById('screen-results').classList.add('hidden');
+        document.getElementById('screen-leaderboard').classList.add('hidden');
+        document.getElementById(`screen-${screenId}`).classList.remove('hidden');
+      }
+
+      openNameSetup(mode) {
+        this.pendingMode = mode;
+        document.getElementById('nameSetupModal').classList.remove('hidden');
+        if (mode === 'solo') {
+          document.getElementById('soloNameInput').classList.remove('hidden');
+          document.getElementById('duelNameInputs').classList.add('hidden');
+          document.getElementById('participantName').required = true;
+          document.getElementById('team1Name').required = false;
+          document.getElementById('team2Name').required = false;
+          setTimeout(() => document.getElementById('participantName').focus(), 50);
+        } else {
+          document.getElementById('soloNameInput').classList.add('hidden');
+          document.getElementById('duelNameInputs').classList.remove('hidden');
+          document.getElementById('participantName').required = false;
+          document.getElementById('team1Name').required = true;
+          document.getElementById('team2Name').required = true;
+          setTimeout(() => document.getElementById('team1Name').focus(), 50);
+        }
+      }
+
+      closeNameSetup() {
+        document.getElementById('nameSetupModal').classList.add('hidden');
+        document.getElementById('nameSetupForm').reset();
+      }
+
+      startWithNames(e) {
+        e.preventDefault();
+        if (this.pendingMode === 'solo') {
+          this.playerName = document.getElementById('participantName').value.trim() || 'Pirate Inconnu';
+        } else {
+          this.teamAName = document.getElementById('team1Name').value.trim() || 'Pirates';
+          this.teamBName = document.getElementById('team2Name').value.trim() || 'Marine';
+        }
+        this.closeNameSetup();
+        this.setupGame(this.pendingMode);
+      }
+
+      setupGame(mode) {
+        this.sound.initCtx();
+        this.gameMode = mode;
+        this.timerEnabled = document.getElementById('timerEnabledCheck').checked;
+        this.totalQuestionsCount = 10;
+
+        const shuffled = [...this.questionsPool].sort(() => 0.5 - Math.random());
+        const targetCount = Math.min(this.totalQuestionsCount, shuffled.length);
+        this.activeQuestions = shuffled.slice(0, targetCount);
+
+        this.currentIndex = 0;
+        this.soloScore = 0;
+        this.teamAScore = 0;
+        this.teamBScore = 0;
+        this.currentTurn = 'teamA';
+        this.jokers = { solo: 1, teamA: 1, teamB: 1 };
+
+        if (this.gameMode === 'duel') {
+          document.getElementById('duelHeaderWidget').classList.remove('hidden');
+          document.getElementById('soloHeaderWidget').classList.add('hidden');
+          document.getElementById('teamTurnIndicator').classList.remove('hidden');
+          document.getElementById('uiTeamAName').innerText = this.teamAName.toUpperCase();
+          document.getElementById('uiTeamBName').innerText = this.teamBName.toUpperCase();
+          this.updateDuelHeader();
+        } else {
+          document.getElementById('duelHeaderWidget').classList.add('hidden');
+          document.getElementById('soloHeaderWidget').classList.remove('hidden');
+          document.getElementById('teamTurnIndicator').classList.add('hidden');
+          document.getElementById('uiSoloName').innerText = this.playerName.toUpperCase();
+          document.getElementById('soloScore').innerText = '0';
+        }
+
+        const timerContainer = document.getElementById('timerContainer');
+        if (this.timerEnabled) timerContainer.classList.remove('hidden');
+        else timerContainer.classList.add('hidden');
+
+        this.showScreen('quiz');
+        this.loadQuestion();
+      }
+
+      restartWithSameSettings() {
+        this.setupGame(this.gameMode);
+      }
+
+      updateDuelHeader() {
+        document.getElementById('teamAScore').innerText = this.teamAScore;
+        document.getElementById('teamBScore').innerText = this.teamBScore;
+        const teamABox = document.getElementById('teamAStatus');
+        const teamBBox = document.getElementById('teamBStatus');
+        const turnText = document.getElementById('teamTurnText');
+
+        if (this.currentTurn === 'teamA') {
+          teamABox.className = "px-3 py-1.5 rounded transition-all bg-amber-900 border-2 border-amber-500 text-amber-200 transform scale-110 shadow-lg shadow-amber-500/30";
+          teamBBox.className = "px-3 py-1.5 rounded transition-all bg-slate-800 text-slate-500 border-2 border-slate-700 opacity-60";
+          turnText.innerHTML = `L'équipage <span class="text-amber-400">${this.teamAName.toUpperCase()}</span> attaque !`;
+        } else {
+          teamBBox.className = "px-3 py-1.5 rounded transition-all bg-blue-900 border-2 border-blue-500 text-blue-200 transform scale-110 shadow-lg shadow-blue-500/30";
+          teamABox.className = "px-3 py-1.5 rounded transition-all bg-slate-800 text-slate-500 border-2 border-slate-700 opacity-60";
+          turnText.innerHTML = `La garnison <span class="text-blue-400">${this.teamBName.toUpperCase()}</span> riposte !`;
+        }
+      }
+
+      loadQuestion() {
+        this.hasAnswered = false;
+        clearInterval(this.timerInterval);
+
+        const q = this.activeQuestions[this.currentIndex];
+        document.getElementById('currentRoundBadge').innerText = `Q${this.currentIndex + 1}/${this.activeQuestions.length}`;
+        document.getElementById('categoryBadge').innerText = q.category || 'Grand Line';
+
+        document.getElementById('questionText').innerText = q.question;
+        document.getElementById('feedbackContainer').classList.add('hidden');
+
+        const grid = document.getElementById('optionsGrid');
+        grid.innerHTML = '';
+
+        const choices = q.options.map((opt, idx) => ({ text: opt, isCorrect: idx === q.correct }));
+        choices.sort(() => 0.5 - Math.random());
+
+        const letters = ['A', 'B', 'C', 'D'];
+        choices.forEach((choice, i) => {
+          const btn = document.createElement('button');
+          btn.className = `w-full p-4 rounded bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-amber-400 text-left flex items-center gap-4 text-slate-200 focus:outline-none transition group op-button`;
+          btn.innerHTML = `
+            <span class="w-10 h-10 bg-slate-900 flex items-center justify-center font-bounty text-2xl text-amber-500 rounded border border-amber-900 group-hover:bg-amber-500 group-hover:text-slate-900 transition-colors shrink-0">
+              ${letters[i] || '•'}
+            </span>
+            <span class="text-sm md:text-base font-bold">${choice.text}</span>
+            <div class="option-icon opacity-0 transition-opacity ml-auto shrink-0"></div>
+          `;
+          btn.onclick = () => this.handleAnswer(choice.isCorrect, btn, choices);
+          grid.appendChild(btn);
+        });
+
+        const currentEntity = this.gameMode === 'solo' ? 'solo' : this.currentTurn;
+        const jokerBtn = document.getElementById('jokerBtn');
+        if (this.jokers[currentEntity] > 0) {
+          jokerBtn.disabled = false;
+          jokerBtn.classList.remove('opacity-40', 'cursor-not-allowed', 'scale-95', 'grayscale');
+          jokerBtn.classList.add('hover:scale-105');
+        } else {
+          jokerBtn.disabled = true;
+          jokerBtn.classList.add('opacity-40', 'cursor-not-allowed', 'scale-95', 'grayscale');
+          jokerBtn.classList.remove('hover:scale-105');
+        }
+
+        if (this.timerEnabled) this.startTimer();
+      }
+
+      useJoker() {
+        if (this.hasAnswered) return;
+        const currentEntity = this.gameMode === 'solo' ? 'solo' : this.currentTurn;
+        if (this.jokers[currentEntity] <= 0) return; 
+
+        this.jokers[currentEntity] = 0;
+        this.sound.playTreasure();
+
+        const jokerBtn = document.getElementById('jokerBtn');
+        jokerBtn.classList.add('opacity-40', 'cursor-not-allowed', 'scale-95', 'grayscale');
+        jokerBtn.classList.remove('hover:scale-105');
+        jokerBtn.disabled = true;
+
+        const q = this.activeQuestions[this.currentIndex];
+        const correctText = q.options[q.correct];
+        const buttons = Array.from(document.querySelectorAll('#optionsGrid button'));
+        
+        const wrongButtons = buttons.filter(btn => btn.querySelector('.font-bold').innerText !== correctText);
+        wrongButtons.sort(() => 0.5 - Math.random());
+        const toDisable = wrongButtons.slice(0, 2);
+
+        toDisable.forEach(btn => {
+          btn.disabled = true;
+          btn.classList.add('opacity-20');
+          btn.classList.remove('hover:bg-slate-700', 'hover:border-amber-400');
+        });
+      }
+
+      startTimer() {
+        this.timerSeconds = 15;
+        const box = document.getElementById('timerBox');
+        box.innerText = this.timerSeconds;
+        box.className = "w-12 h-12 rounded-full bg-slate-900 border-4 border-amber-500 flex items-center justify-center text-amber-500 text-3xl shadow-inner transition-colors";
+
+        this.timerInterval = setInterval(() => {
+          this.timerSeconds--;
+          box.innerText = this.timerSeconds;
+          if (this.timerSeconds <= 5) {
+            box.className = "w-12 h-12 rounded-full bg-red-950 border-4 border-red-500 flex items-center justify-center text-red-500 text-3xl animate-danger shadow-lg shadow-red-500/50";
+            this.sound.playTick();
+          }
+          if (this.timerSeconds <= 0) {
+            clearInterval(this.timerInterval);
+            this.handleTimeout();
+          }
+        }, 1000);
+      }
+
+      handleTimeout() {
+        if (this.hasAnswered) return;
+        this.hasAnswered = true;
+        this.sound.playSplash();
+        this.revealAnswers(null, false, true);
+      }
+
+      handleAnswer(isCorrect, clickedBtn, choices) {
+        if (this.hasAnswered) return;
+        this.hasAnswered = true;
+        clearInterval(this.timerInterval);
+
+        if (isCorrect) {
+          this.sound.playTreasure();
+          if (typeof confetti === 'function') {
+            confetti({ particleCount: 70, spread: 70, colors: ['#f59e0b', '#dc2626', '#1d4ed8'], origin: { y: 0.65 }});
+          }
+          if (this.gameMode === 'solo') {
+            this.soloScore++;
+            document.getElementById('soloScore').innerText = this.soloScore;
+          } else {
+            if (this.currentTurn === 'teamA') this.teamAScore++;
+            else this.teamBScore++;
+          }
+        } else {
+          this.sound.playSplash();
+        }
+        this.revealAnswers(clickedBtn, isCorrect, false);
+      }
+
+      revealAnswers(clickedBtn, isCorrect, isTimeout) {
+        const q = this.activeQuestions[this.currentIndex];
+        const correctText = q.options[q.correct];
+        const buttons = document.querySelectorAll('#optionsGrid button');
+
+        buttons.forEach(btn => {
+          btn.disabled = true;
+          const text = btn.querySelector('.font-bold').innerText;
+          const icon = btn.querySelector('.option-icon');
+
+          if (text === correctText) {
+            btn.className = "w-full p-4 rounded bg-green-900 border-2 border-green-500 text-left flex items-center gap-4 text-green-100 transform scale-[1.02] transition-transform";
+            icon.innerHTML = `<span class="text-green-400 font-bold text-2xl">✓</span>`;
+            icon.classList.remove('opacity-0');
+          } else if (btn === clickedBtn && !isCorrect) {
+            btn.className = "w-full p-4 rounded bg-red-900 border-2 border-red-600 text-left flex items-center gap-4 text-red-100";
+            icon.innerHTML = `<span class="text-red-400 font-bold text-2xl">✕</span>`;
+            icon.classList.remove('opacity-0');
+          } else {
+            btn.className = "w-full p-4 rounded bg-slate-900 border border-slate-700 text-left opacity-40 flex items-center gap-4 text-slate-400";
+          }
+        });
+
+        const feedbackContainer = document.getElementById('feedbackContainer');
+        const feedbackTitle = document.getElementById('feedbackTitle');
+        const feedbackExplanation = document.getElementById('feedbackExplanation');
+        const feedbackMedia = document.getElementById('feedbackMedia');
+
+        feedbackContainer.classList.remove('hidden');
+        feedbackMedia.innerHTML = ''; 
+
+        if (isTimeout) {
+          feedbackContainer.className = "mt-8 p-5 rounded-lg bg-orange-900 border-2 border-orange-500 text-white text-center space-y-3";
+          feedbackTitle.innerText = "⏳ À L'EAU ! (Temps écoulé)";
+          feedbackTitle.className = "font-bounty text-4xl text-orange-400 drop-shadow-sm";
+        } else if (isCorrect) {
+          feedbackContainer.className = "mt-8 p-5 rounded-lg bg-green-900 border-2 border-green-500 text-white text-center space-y-3";
+          feedbackTitle.innerText = "💰 BINGO !";
+          feedbackTitle.className = "font-bounty text-4xl text-green-400 drop-shadow-sm";
+        } else {
+          feedbackContainer.className = "mt-8 p-5 rounded-lg bg-red-900 border-2 border-red-600 text-white text-center space-y-3";
+          feedbackTitle.innerText = "⚓ TOUCHÉ COULÉ !";
+          feedbackTitle.className = "font-bounty text-4xl text-red-400 drop-shadow-sm";
+        }
+
+        if (q.mediaUrl) {
+          feedbackMedia.classList.remove('hidden');
+          const ytMatch = q.mediaUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+          if (ytMatch && ytMatch[1]) {
+            feedbackMedia.innerHTML = `<iframe class="w-full max-w-md h-48 md:h-64 mx-auto border-2 border-slate-800" src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&mute=0" allowfullscreen></iframe>`;
+          } else {
+            feedbackMedia.innerHTML = `<img src="${q.mediaUrl}" class="max-h-48 md:max-h-64 mx-auto object-contain border-2 border-slate-800">`;
+          }
+        } else {
+          feedbackMedia.classList.add('hidden');
+        }
+
+        feedbackExplanation.innerText = q.explanation || "Une leçon importante pour naviguer sur Grand Line !";
+        if (this.gameMode === 'duel') this.updateDuelHeader();
+      }
+
+      nextQuestion() {
+        this.currentIndex++;
+        if (this.currentIndex < this.activeQuestions.length) {
+          if (this.gameMode === 'duel') {
+            this.currentTurn = (this.currentTurn === 'teamA') ? 'teamB' : 'teamA';
+            this.updateDuelHeader();
+          }
+          this.loadQuestion();
+        } else {
+          this.showResults();
+        }
+      }
+
+      showResults() {
+        this.showScreen('results');
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 150, spread: 90, colors: ['#f59e0b', '#ef4444', '#3b82f6', '#ffffff'], origin: { y: 0.3 }});
+        }
+
+        const mottos = [
+          "Même sans fruit du démon, accomplissez de grandes choses aujourd'hui !",
+          "L'équipage compte sur vous. Hissez les voiles et bonne journée !",
+          "Partez à la recherche du One Piece... ou au moins de vos objectifs du jour !",
+          "N'oubliez pas : un bon repas au Baratie et c'est reparti !"
+        ];
+        document.getElementById('dailyMotto').innerText = mottos[Math.floor(Math.random() * mottos.length)];
+
+        if (this.gameMode === 'solo') {
+          document.getElementById('soloScoreDisplay').classList.remove('hidden');
+          document.getElementById('duelScoreDisplay').classList.add('hidden');
+
+          const finalScore = this.soloScore;
+          const total = this.activeQuestions.length;
+          document.getElementById('finalScoreVal').innerText = `${finalScore}/${total}`;
+
+          let rank = "", icon = "🏆";
+          const ratio = finalScore / total;
+
+          if (ratio === 1) { rank = "Roi des Pirates"; icon = "👑"; }
+          else if (ratio >= 0.75) { rank = "Capitaine Corsaire"; icon = "⚔️"; }
+          else if (ratio >= 0.5) { rank = "Supernova"; icon = "🧭"; }
+          else { rank = "Mousse de corvée"; icon = "🪣"; }
+
+          document.getElementById('rankTitleBadge').innerText = `Grade : ${rank}`;
+          document.getElementById('resultTrophyIcon').innerText = icon;
+          
+          this.saveScoreToLocal({ mode: 'solo', name: this.playerName, score: finalScore, total: total, rank: rank });
+        } else {
+          document.getElementById('soloScoreDisplay').classList.add('hidden');
+          document.getElementById('duelScoreDisplay').classList.remove('hidden');
+
+          document.getElementById('finalUiTeamAName').innerText = this.teamAName;
+          document.getElementById('finalUiTeamBName').innerText = this.teamBName;
+          document.getElementById('finalTeamAScore').innerText = this.teamAScore;
+          document.getElementById('finalTeamBScore').innerText = this.teamBScore;
+
+          const duelWinnerText = document.getElementById('duelWinnerText');
+          let winner = "";
+          if (this.teamAScore > this.teamBScore) {
+            duelWinnerText.innerHTML = `🏴‍☠️ LA FACTION <span class='text-amber-300'>${this.teamAName.toUpperCase()}</span> RÉGNE SUR LES MERS !`;
+            document.getElementById('resultTrophyIcon').innerText = "🏴‍☠️";
+            winner = this.teamAName;
+          } else if (this.teamBScore > this.teamAScore) {
+            duelWinnerText.innerHTML = `⚓ LA FACTION <span class='text-blue-300'>${this.teamBName.toUpperCase()}</span> A FAIT RÉGNER LA JUSTICE !`;
+            document.getElementById('resultTrophyIcon').innerText = "⚓";
+            winner = this.teamBName;
+          } else {
+            duelWinnerText.innerHTML = "🤝 LES FORCES SONT À L'ÉQUILIBRE ! (ÉGALITÉ)";
+            document.getElementById('resultTrophyIcon').innerText = "⚔️";
+            winner = "Égalité";
+          }
+          
+          this.saveScoreToLocal({ 
+            mode: 'duel', 
+            teamA: this.teamAName, scoreA: this.teamAScore,
+            teamB: this.teamBName, scoreB: this.teamBScore,
+            winner: winner, total: this.activeQuestions.length
+          });
+        }
+      }
+
+      saveScoreToLocal(data) {
+        data.date = new Date().toISOString();
+        let scores = JSON.parse(localStorage.getItem('legoOnePieceNetflixQuizScores')) || [];
+        scores.push(data);
+        localStorage.setItem('legoOnePieceNetflixQuizScores', JSON.stringify(scores));
+      }
+      
+      showLeaderboard() {
+        this.showScreen('leaderboard');
+        this.renderLeaderboardList('solo');
+      }
+      
+      renderLeaderboardList(filterMode) {
+        const tabSolo = document.getElementById('tabSolo');
+        const tabDuel = document.getElementById('tabDuel');
+        if (filterMode === 'solo') {
+          tabSolo.className = "text-amber-400 bg-amber-900/50 rounded-t px-4 py-2 border-b-2 border-amber-500";
+          tabDuel.className = "text-amber-700 hover:text-amber-500 px-4 py-2";
+        } else {
+          tabDuel.className = "text-amber-400 bg-amber-900/50 rounded-t px-4 py-2 border-b-2 border-amber-500";
+          tabSolo.className = "text-amber-700 hover:text-amber-500 px-4 py-2";
+        }
+        
+        const listContainer = document.getElementById('leaderboardList');
+        listContainer.innerHTML = '';
+        
+        let scores = JSON.parse(localStorage.getItem('legoOnePieceNetflixQuizScores')) || [];
+        let filteredScores = scores.filter(s => s.mode === filterMode);
+        
+        if (filteredScores.length === 0) {
+          listContainer.innerHTML = `<div class="text-center py-12 text-slate-500 font-bounty text-2xl">Aucun avis de recherche affiché.</div>`;
+          return;
+        }
+        
+        if (filterMode === 'solo') {
+          filteredScores.sort((a, b) => {
+            const rA = a.score / a.total, rB = b.score / b.total;
+            if (rB !== rA) return rB - rA;
+            return new Date(b.date) - new Date(a.date);
+          });
+          
+          filteredScores.forEach((s, idx) => {
+            const date = new Date(s.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute:'2-digit' }).replace(':', 'h');
+            const ratio = Math.round((s.score / s.total) * 100);
+            listContainer.innerHTML += `
+              <div class="flex items-center justify-between p-4 bg-slate-900/50 border border-slate-700 rounded hover:bg-slate-800">
+                <div class="flex items-center gap-4">
+                  <div class="w-10 text-center font-bounty ${idx === 0 ? 'text-amber-500 text-4xl' : 'text-slate-400 text-3xl'}">
+                    #${idx + 1}
+                  </div>
+                  <div>
+                    <div class="font-bounty text-amber-100 text-3xl tracking-wider">${s.name}</div>
+                    <div class="text-xs text-slate-400 font-inter font-bold">${date} - <span class="text-red-400">${s.rank}</span></div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="font-bounty text-amber-500 text-4xl leading-none">${s.score} <span class="text-xl text-slate-500">/${s.total}</span></div>
+                  <div class="text-[10px] uppercase font-extrabold text-slate-500 mt-1">Prime: ${ratio}%</div>
+                </div>
+              </div>
+            `;
+          });
+        } else {
+          filteredScores.sort((a, b) => new Date(b.date) - new Date(a.date));
+          filteredScores.forEach((s, idx) => {
+            const date = new Date(s.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute:'2-digit' }).replace(':', 'h');
+            listContainer.innerHTML += `
+              <div class="p-5 bg-slate-900/50 border border-slate-700 rounded space-y-4">
+                <div class="flex justify-between items-center text-xs text-slate-400 font-bold border-b border-slate-700 pb-2 font-inter">
+                  <span>Bataille du : ${date}</span>
+                  <span class="px-2.5 py-1 ${s.winner === 'Égalité' ? 'bg-slate-700' : 'bg-red-900 text-red-200'} uppercase font-bounty text-lg tracking-wide rounded">Vainqueur: ${s.winner}</span>
+                </div>
+                <div class="flex items-stretch justify-between gap-4">
+                  <div class="flex-1 text-center bg-slate-800 rounded p-3 flex flex-col justify-center">
+                    <span class="block text-sm font-bounty uppercase text-slate-300 truncate" title="${s.teamA}">${s.teamA}</span>
+                    <span class="text-4xl font-bounty text-amber-500 leading-none mt-1">${s.scoreA} <span class="text-xl text-slate-500">/${s.total}</span></span>
+                  </div>
+                  <div class="flex items-center px-2 font-bounty text-slate-500 text-3xl">VS</div>
+                  <div class="flex-1 text-center bg-slate-800 rounded p-3 flex flex-col justify-center">
+                    <span class="block text-sm font-bounty uppercase text-slate-300 truncate" title="${s.teamB}">${s.teamB}</span>
+                    <span class="text-4xl font-bounty text-blue-400 leading-none mt-1">${s.scoreB} <span class="text-xl text-slate-500">/${s.total}</span></span>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+        }
+      }
+      
+      clearLeaderboard() {
+        if (confirm("Brûler tous les avis de recherche ? L'historique sera effacé !")) {
+          localStorage.removeItem('legoOnePieceNetflixQuizScores');
+          this.renderLeaderboardList('solo');
+        }
+      }
+
+      openCustomModal() { document.getElementById('customModal').classList.remove('hidden'); }
+      closeCustomModal() {
+        document.getElementById('customModal').classList.add('hidden');
+        document.getElementById('addQuestionForm').reset();
+      }
+
+      handleCustomQuestionSubmit(e) {
+        e.preventDefault();
+        const text = document.getElementById('custQText').value.trim();
+        const correct = document.getElementById('custQCorrect').value.trim();
+        const wrong1 = document.getElementById('custQWrong1').value.trim();
+        const wrong2 = document.getElementById('custQWrong2').value.trim();
+        const wrong3 = document.getElementById('custQWrong3').value.trim();
+        const expl = document.getElementById('custQExpl').value.trim() || "Information pêchée dans Grand Line !";
+        const media = document.getElementById('custQMedia').value.trim();
+
+        if (!text || !correct || !wrong1) return;
+
+        this.questionsPool.unshift({
+          question: text,
+          options: [correct, wrong1, wrong2 || "Le Roi des Pirates", wrong3 || "Le Vogue Merry"],
+          correct: 0, category: "Quête Magasin", explanation: expl, mediaUrl: media 
+        });
+
+        this.initUI();
+        this.closeCustomModal();
+        this.sound.playTreasure();
+      }
+    }
+
+    const initApp = () => { if (!window.app) window.app = new QuizApp(); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initApp);
+    else initApp();
+  </script>
+</body>
+</html>
